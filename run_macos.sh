@@ -7,12 +7,11 @@ fi
 echo "Temporarily disabling FTDI drivers."
 kextunload -b com.apple.driver.AppleUSBFTDI
 kextunload /System/Library/Extensions/FTDIUSBSerialDriver.kext
-echo ""
+echo
 
 python run.py $@
 
-echo ""
+echo
 echo "Enabling FTDI drivers again."
 kextload -b com.apple.driver.AppleUSBFTDI
 kextload /System/Library/Extensions/FTDIUSBSerialDriver.kext
-
