@@ -67,16 +67,23 @@ class AutoColorTemp(object):
 	def update(self):
 		"""Query color sensor hardware and update monitor color temperature."""
 		# First measure the color from the sensor.
-		measured = self.hardware.get_color()
-		log.info('Read color from hardware: red={0} green={1} blue={2}'.format(measured[0], measured[1], measured[2]))
-		# Compute temperature of measured color.
-		temp = _rgb_to_temp(measured[0], measured[1], measured[2])
-		print('Measured color temperature: {0:,.0f} kelvin'.format(temp))
-		# Adjust monitor color temperature if within range of allowed temps.
-		if 1667.0 <= temp and temp <= 25000.0:
-			white = _temp_to_white(temp)
-			log.info('Computed white point: red={0} green={1} blue={2}'.format(white[0], white[1], white[2]))
-			self.gamma.adjust_white_point(white)
+		try:
+			measured = self.hardware.get_color()
+			log.info('Read color from hardware: red={0:0.3f} green={1:0.3f} blue={2:0.3f}'.format(measured[0], measured[1], measured[2]))
+			# Compute temperature of measured color.
+			temp = _rgb_to_temp(measured[0], measured[1], measured[2])
+			print('Measured color temperature: {0:,.0f} kelvin'.format(temp))
+			# Adjust monitor color temperature if within range of allowed temps.
+			if 1667.0 <= temp and temp <= 25000.0:
+				white = _temp_to_white(temp)
+				log.info('Computed white point: red={0:0.3f} green={1:0.3f} blue={2:0.3f}'.format(white[0], white[1], white[2]))
+				self.gamma.adjust_white_point(white)
+			else:
+				log.warning('Measured color temperature outside bounds of allowed temperatures.  No monitor gamma adjustment made.')
+		except ZeroDivisionError:
+			# Handle in some rare cases a divide by zero. Ignore the update and try
+			# again with the next update opportunity.
+			log.warning('Divide by zero while updating color temp.  Waiting for next update to try again.')
 
 	def close(self):
 		"""Restore gamma to original value and close hardware connection."""

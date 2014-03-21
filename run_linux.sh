@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ "$(id -u)" != "0" ]; then
   echo "Must be run as root with sudo!"
   exit 1
