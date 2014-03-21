@@ -1,4 +1,4 @@
-from ctypes import windll
+from ctypes import *
 import logging
 
 from AutoColorTemp import gamma_table_gen
