@@ -51,7 +51,8 @@ if __name__ == '__main__':
 		import X11Gamma
 		gamma = X11Gamma.X11Gamma()
 	elif sys == 'Windows':
-		pass
+		import Win32Gamma
+		gamma = Wind32Gamma.Win32Gamma()
 	else:
 		raise RuntimeError('Could not find gamma adjustment for platform: {0}'.format(sys))
 
